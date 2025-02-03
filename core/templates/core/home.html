@@ -1,0 +1,23 @@
+{% extends "core/base.html" %}
+
+{% block title %}Save Parking Spot{% endblock %}
+
+{% block content %}
+<h1>🚗 Save Your Parking Spot</h1>
+<button onclick="saveLocation()">Save My Location</button>
+<p id="status"></p>
+
+<script>
+    function saveLocation() {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                localStorage.setItem("parking_lat", position.coords.latitude);
+                localStorage.setItem("parking_lon", position.coords.longitude);
+                document.getElementById("status").innerText = "✅ Location saved!";
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+</script>
+{% endblock %}

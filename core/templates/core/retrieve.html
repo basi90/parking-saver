@@ -1,0 +1,25 @@
+{% extends "core/base.html" %}
+
+{% block title %}Find Your Car{% endblock %}
+
+{% block content %}
+<h1>🚗 Find Your Car</h1>
+<p id="location"></p>
+<a id="mapLink" href="#" target="_blank" style="display: none;">Show on Map</a>
+
+<script>
+    function showLocation() {
+        let lat = localStorage.getItem("parking_lat");
+        let lon = localStorage.getItem("parking_lon");
+
+        if (lat && lon) {
+            document.getElementById("location").innerText = `📍 Latitude: ${lat}, Longitude: ${lon}`;
+            document.getElementById("mapLink").href = `https://www.google.com/maps?q=${lat},${lon}`;
+            document.getElementById("mapLink").style.display = "block";
+        } else {
+            document.getElementById("location").innerText = "No location saved.";
+        }
+    }
+    window.onload = showLocation;
+</script>
+{% endblock %}
