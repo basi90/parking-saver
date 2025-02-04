@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Internal
-    "core"
+    "core",
+    # Libraries
+    "pwa",
 ]
 
 MIDDLEWARE = [
@@ -57,7 +59,7 @@ ROOT_URLCONF = 'parking_saver.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -118,7 +120,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -126,3 +128,39 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# PWA Settings
+PWA_APP_ID = "/"
+PWA_APP_NAME = "Parking Saver"
+PWA_APP_DESCRIPTION = "Save and retrieve your parking spot"
+PWA_APP_THEME_COLOR = "#2196F3"
+PWA_APP_BACKGROUND_COLOR = "#ffffff"
+PWA_APP_DISPLAY = "standalone"
+PWA_APP_SCOPE = "/"
+PWA_APP_ORIENTATION = "any"
+PWA_APP_START_URL = "/"
+PWA_APP_STATUS_BAR_COLOR = "default"
+
+PWA_APP_ICONS = [
+    {"src": "/static/icons/icon-192x192.png", "sizes": "192x192"},
+    {"src": "/static/icons/icon-512x512.png", "sizes": "512x512"}
+]
+
+PWA_APP_ICONS_APPLE = [
+    {"src": "/static/icons/icon-192x192.png", "sizes": "192x192"}
+]
+
+PWA_APP_SPLASH_SCREEN = [
+    {"src": "/static/icons/icon-512x512.png", "media": "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"}
+]
+
+PWA_APP_DIR = "ltr"
+PWA_APP_LANG = "en-US"
+
+PWA_APP_SCREENSHOTS = [
+    {"src": "/static/screenshots/screenshot1.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "wide"},
+    {"src": "/static/screenshots/screenshot2.png", "sizes": "1080x1920", "type": "image/png"}
+]
+
+# Define the path to the service worker
+PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, "static", "serviceworker.js")

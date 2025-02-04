@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load pwa %}
+    {% progressive_web_app_meta %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Parking Saver{% endblock %}</title>
-    <link rel="manifest" href="/static/manifest.json">
+
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+
     <script>
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("/static/service-worker.js")
-                .then(() => console.log("Service Worker registered"))
-                .catch(error => console.log("Service Worker registration failed", error));
-        }
+      if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.register("/serviceworker.js", { scope: "/" })
+              .then(() => console.log("✅ Service Worker registered with scope: /"))
+              .catch(error => console.log("❌ Service Worker registration failed", error));
+      }
     </script>
 </head>
 <body>
