@@ -54,8 +54,20 @@
         .hidden {
             display: none;
         }
+        #locations li {
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding-bottom: 1rem;
+        }
+        body.dark #locations li {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
 
-        /* 🔥 Dark Mode Styles */
+        #darkModeToggle {
+            z-index: 1000;
+        }
+        .text-start {
+            text-align: left !important;
+        }
         body.dark {
             background-color: #1e1e1e;
             color: white;
@@ -68,8 +80,8 @@
 </head>
 <body>
     <div class="container">
-        <!-- 🌙 Dark Mode Toggle Button -->
-        <button id="darkModeToggle" class="btn btn-dark w-100 mt-3">🌙 Dark Mode</button>
+        <!-- Update this in base.html -->
+        <button id="darkModeToggle" class="btn btn-light position-absolute top-0 end-0 m-3 rounded-circle p-2 shadow">🌙</button>
 
         {% block content %}{% endblock %}
     </div>
@@ -79,11 +91,11 @@
 
       function updateButtonText() {
           if (document.body.classList.contains("dark")) {
-              toggle.innerHTML = "☀️ Light Mode";
+              toggle.innerHTML = "☀️";
               toggle.classList.remove("btn-dark");
               toggle.classList.add("btn-light");
           } else {
-              toggle.innerHTML = "🌙 Dark Mode";
+              toggle.innerHTML = "🌙";
               toggle.classList.remove("btn-light");
               toggle.classList.add("btn-dark");
           }

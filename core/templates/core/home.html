@@ -8,7 +8,7 @@
 <!-- Save Parking Spot -->
 <div class="card p-4">
     <h2 class="h5 fw-semibold mb-3">Save Your Parking Spot</h2>
-    <button class="btn btn-primary w-100" onclick="saveLocation()">📍 Save My Location</button>
+    <button class="btn btn-primary w-100" onclick="saveLocation()">📌 Save My Location</button>
     <p id="status" class="text-success mt-2"></p>
 </div>
 
@@ -16,19 +16,30 @@
 <div class="card p-4">
     <h2 class="h5 fw-semibold mb-3">Find Your Car</h2>
     <ul id="locations" class="list-unstyled"></ul>
-    <a id="mapLink" href="#" target="_blank" class="btn btn-secondary w-100 hidden mt-3">📍 Show Last Location</a>
+    <a id="mapLink" href="#" target="_blank" class="btn btn-secondary w-100 hidden mt-3">📍  Show Location</a>
 </div>
 
 <script>
-    function saveLocation() {
+  function saveLocation() {
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(function(position) {
             let parkingHistory = JSON.parse(localStorage.getItem("parking_history")) || [];
 
+            const now = new Date();
+            const dateFormatted = now.toLocaleDateString('en-US', {
+                day: 'numeric',
+                month: 'long'
+            });
+            const timeFormatted = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
             let newLocation = {
                 lat: position.coords.latitude,
                 lon: position.coords.longitude,
-                timestamp: new Date().toLocaleString()
+                date: dateFormatted,
+                time: timeFormatted
             };
 
             parkingHistory.push(newLocation);
@@ -46,37 +57,37 @@
     }
   }
 
+  function showLocations() {
+    let parkingHistory = JSON.parse(localStorage.getItem("parking_history")) || [];
+    let list = document.getElementById("locations");
+    list.innerHTML = "";
 
-    function showLocations() {
-        let parkingHistory = JSON.parse(localStorage.getItem("parking_history")) || [];
-        let list = document.getElementById("locations");
-        list.innerHTML = "";
-
-        if (parkingHistory.length === 0) {
-            list.innerHTML = "<li class='text-muted'>No location saved.</li>";
-            document.getElementById("mapLink").classList.add("hidden");
-            return;
-        }
-
-        parkingHistory.forEach((location, index) => {
-            let listItem = document.createElement("li");
-            listItem.classList.add("mb-2");
-            listItem.innerText = `${location.timestamp}: Lat ${location.lat}, Lon ${location.lon}`;
-
-            let mapLink = document.createElement("a");
-            mapLink.href = `https://www.google.com/maps?q=${location.lat},${location.lon}`;
-            mapLink.target = "_blank";
-            // mapLink.innerText = " [Show on Map]";
-            mapLink.classList.add("text-primary", "ms-2");
-
-            listItem.appendChild(mapLink);
-            list.appendChild(listItem);
-        });
-
-        let lastLocation = parkingHistory[parkingHistory.length - 1];
-        document.getElementById("mapLink").href = `https://www.google.com/maps?q=${lastLocation.lat},${lastLocation.lon}`;
-        document.getElementById("mapLink").classList.remove("hidden");
+    if (parkingHistory.length === 0) {
+        list.innerHTML = "<li class='text-muted'>No location saved.</li>";
+        document.getElementById("mapLink").classList.add("hidden");
+        return;
     }
+
+    parkingHistory.forEach((location, index) => {
+        let listItem = document.createElement("li");
+        listItem.classList.add("mb-3", "text-start");
+        listItem.innerHTML = `
+            <div>Date: ${location.date}</div>
+            <div>Time: ${location.time}</div>
+        `;
+
+        let mapLink = document.createElement("a");
+        mapLink.href = `https://www.google.com/maps?q=${location.lat},${location.lon}`;
+        mapLink.target = "_blank";
+        mapLink.classList.add("text-primary", "d-block", "mt-1");
+        listItem.appendChild(mapLink);
+        list.appendChild(listItem);
+    });
+
+    let lastLocation = parkingHistory[parkingHistory.length - 1];
+    document.getElementById("mapLink").href = `https://www.google.com/maps?q=${lastLocation.lat},${lastLocation.lon}`;
+    document.getElementById("mapLink").classList.remove("hidden");
+  }
 
     window.onload = showLocations;
 </script>
