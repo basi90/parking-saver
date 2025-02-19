@@ -1,41 +1,40 @@
-var staticCacheName = "djangopwa-v1";
+const CACHE_NAME = "djangopwa-v1";
+const STATIC_ASSETS = [
+    "/", // Homepage
+    "/pwa/manifest.json", // Manifest file (if served from `/pwa/`)
+    "/pwa/serviceworker.js", // Service Worker file (if served from `/pwa/`)
+    "/static/icons/icon-192x192.png",
+    "/static/icons/icon-512x512.png"
+];
 
-self.addEventListener("install", function(event) {
-  event.waitUntil(
-      caches.open(staticCacheName).then(async function(cache) {
-          console.log("Service Worker: Caching static assets");
+self.addEventListener("install", (event) => {
+    event.waitUntil(
+        caches.open(CACHE_NAME).then(async (cache) => {
+            console.log("Service Worker: Caching static assets");
 
-          const urlsToCache = [
-              "/",
-              "/home/",
-              "/manifest.json",
-              "/serviceworker.js",
-              "/static/icons/icon-192x192.png",
-              "/static/icons/icon-512x512.png"
-          ];
+            const cachePromises = STATIC_ASSETS.map(url =>
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return cache.put(url, response);
+                    })
+                    .catch(error => console.warn(`⚠️ Skipping ${url}: ${error.message}`))
+            );
 
-          const cachePromises = urlsToCache.map(url =>
-              fetch(url)
-                  .then(response => {
-                      if (!response.ok) {
-                          throw new Error(`HTTP error! status: ${response.status}`);
-                      }
-                      return cache.put(url, response);
-                  })
-                  .catch(error => console.warn(`⚠️ Skipping ${url}: ${error.message}`))
-          );
-
-          return Promise.all(cachePromises);
-      })
-  );
+            return Promise.all(cachePromises);
+        })
+    );
 });
-self.addEventListener("activate", function(event) {
+
+self.addEventListener("activate", (event) => {
     console.log("Service Worker: Activated");
     event.waitUntil(
-        caches.keys().then(function(cacheNames) {
+        caches.keys().then((cacheNames) => {
             return Promise.all(
-                cacheNames.map(function(cache) {
-                    if (cache !== staticCacheName) {
+                cacheNames.map((cache) => {
+                    if (cache !== CACHE_NAME) {
                         console.log("Service Worker: Removing old cache", cache);
                         return caches.delete(cache);
                     }
@@ -46,17 +45,21 @@ self.addEventListener("activate", function(event) {
     return self.clients.claim();
 });
 
-self.addEventListener("fetch", function(event) {
+self.addEventListener("fetch", (event) => {
     event.respondWith(
         fetch(event.request)
-            .then(function(response) {
-                return caches.open(staticCacheName).then(function(cache) {
-                    cache.put(event.request, response.clone());
+            .then((response) => {
+                if (!response || response.status !== 200 || response.type !== "basic") {
                     return response;
+                }
+
+                const responseClone = response.clone();
+                caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, responseClone);
                 });
+
+                return response;
             })
-            .catch(function() {
-                return caches.match(event.request);
-            })
+            .catch(() => caches.match(event.request))
     );
 });
