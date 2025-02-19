@@ -21,74 +21,68 @@
 
 <script>
   function saveLocation() {
-    if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            let parkingHistory = JSON.parse(localStorage.getItem("parking_history")) || [];
+      if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+              const now = new Date();
+              const dateFormatted = now.toLocaleDateString('en-US', {
+                  day: 'numeric',
+                  month: 'long'
+              });
+              const timeFormatted = now.toLocaleTimeString('en-US', {
+                  hour: '2-digit',
+                  minute: '2-digit'
+              });
 
-            const now = new Date();
-            const dateFormatted = now.toLocaleDateString('en-US', {
-                day: 'numeric',
-                month: 'long'
-            });
-            const timeFormatted = now.toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+              let newLocation = {
+                  lat: position.coords.latitude.toFixed(6),
+                  lon: position.coords.longitude.toFixed(6),
+                  date: dateFormatted,
+                  time: timeFormatted
+              };
 
-            let newLocation = {
-                lat: position.coords.latitude,
-                lon: position.coords.longitude,
-                date: dateFormatted,
-                time: timeFormatted
-            };
+              // ✅ Overwrite the previous location instead of appending
+              localStorage.setItem("parking_location", JSON.stringify(newLocation));
 
-            parkingHistory.push(newLocation);
-            if (parkingHistory.length > 5) {
-                parkingHistory.shift();
-            }
-
-            localStorage.setItem("parking_history", JSON.stringify(parkingHistory));
-
-            document.getElementById("status").innerText = "✅ Location saved!";
-            showLocations();
-        });
-    } else {
-        alert("Geolocation is not supported by this browser.");
-    }
+              document.getElementById("status").innerText = "✅ Location saved!";
+              showLocation();
+          }, function(error) {
+              alert("Error getting location: " + error.message);
+          });
+      } else {
+          alert("Geolocation is not supported by this browser.");
+      }
   }
 
-  function showLocations() {
-    let parkingHistory = JSON.parse(localStorage.getItem("parking_history")) || [];
-    let list = document.getElementById("locations");
-    list.innerHTML = "";
+  function showLocation() {
+    let locationData = localStorage.getItem("parking_location");
 
-    if (parkingHistory.length === 0) {
-        list.innerHTML = "<li class='text-muted'>No location saved.</li>";
+    if (!locationData) {
+        document.getElementById("locations").innerHTML = "<li class='text-muted'>No location saved.</li>";
         document.getElementById("mapLink").classList.add("hidden");
         return;
     }
 
-    parkingHistory.forEach((location, index) => {
-        let listItem = document.createElement("li");
-        listItem.classList.add("mb-3", "text-start");
-        listItem.innerHTML = `
-            <div>Date: ${location.date}</div>
-            <div>Time: ${location.time}</div>
-        `;
+    let location = JSON.parse(locationData);
 
-        let mapLink = document.createElement("a");
-        mapLink.href = `https://www.google.com/maps?q=${location.lat},${location.lon}`;
-        mapLink.target = "_blank";
-        mapLink.classList.add("text-primary", "d-block", "mt-1");
-        listItem.appendChild(mapLink);
-        list.appendChild(listItem);
-    });
+    let list = document.getElementById("locations");
+    list.innerHTML = ""; // Clear previous data
 
-    let lastLocation = parkingHistory[parkingHistory.length - 1];
-    document.getElementById("mapLink").href = `https://www.google.com/maps?q=${lastLocation.lat},${lastLocation.lon}`;
+    let listItem = document.createElement("li");
+    listItem.classList.add("mb-3", "text-start");
+    listItem.innerHTML = `
+        <div><strong>Date:</strong> ${location.date}</div>
+        <div><strong>Time:</strong> ${location.time}</div>
+        <div><strong>Coordinates:</strong> ${location.lat}, ${location.lon}</div>
+    `;
+
+    list.appendChild(listItem);
+
+    // ✅ Modify "Show Location" button to open Google Maps directly
+    document.getElementById("mapLink").href = `https://www.google.com/maps?q=${location.lat},${location.lon}`;
     document.getElementById("mapLink").classList.remove("hidden");
   }
 
-    window.onload = showLocations;
+
+  window.onload = showLocation;
 </script>
 {% endblock %}

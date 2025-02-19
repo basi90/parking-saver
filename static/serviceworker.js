@@ -1,8 +1,8 @@
 const CACHE_NAME = "djangopwa-v1";
 const STATIC_ASSETS = [
-    "/", // Homepage
-    "/pwa/manifest.json", // Manifest file (if served from `/pwa/`)
-    "/pwa/serviceworker.js", // Service Worker file (if served from `/pwa/`)
+    "/",
+    "/pwa/manifest.json",
+    "/pwa/serviceworker.js",
     "/static/icons/icon-192x192.png",
     "/static/icons/icon-512x512.png"
 ];
@@ -46,20 +46,23 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-    event.respondWith(
-        fetch(event.request)
-            .then((response) => {
-                if (!response || response.status !== 200 || response.type !== "basic") {
-                    return response;
-                }
-
-                const responseClone = response.clone();
-                caches.open(CACHE_NAME).then((cache) => {
-                    cache.put(event.request, responseClone);
-                });
-
-                return response;
-            })
-            .catch(() => caches.match(event.request))
-    );
+  event.respondWith(
+      caches.match(event.request)
+          .then((response) => {
+              if (response) {
+                  return response;
+              }
+              return fetch(event.request)
+                  .then((fetchResponse) => {
+                      return fetchResponse;
+                  })
+                  .catch((error) => {
+                      console.error("Service Worker Fetch Error:", error);
+                      return new Response("Offline: Failed to fetch resource", {
+                          status: 503,
+                          statusText: "Service Unavailable",
+                      });
+                  });
+          })
+  );
 });
