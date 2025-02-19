@@ -1,11 +1,19 @@
 {% extends "core/base.html" %}
 
-{% block title %}Save Parking Spot{% endblock %}
+{% block title %}Parking Saver{% endblock %}
 
 {% block content %}
-<h1>🚗 Save Your Parking Spot</h1>
+<h1>🚗 Parking Saver</h1>
+
+<!-- Save Parking Spot -->
+<h2>Save Your Parking Spot</h2>
 <button onclick="saveLocation()">Save My Location</button>
 <p id="status"></p>
+
+<!-- Retrieve Parking Spot -->
+<h2>Find Your Car</h2>
+<p id="location"></p>
+<a id="mapLink" href="#" target="_blank" style="display: none;">Show on Map</a>
 
 <script>
     function saveLocation() {
@@ -14,10 +22,27 @@
                 localStorage.setItem("parking_lat", position.coords.latitude);
                 localStorage.setItem("parking_lon", position.coords.longitude);
                 document.getElementById("status").innerText = "✅ Location saved!";
+                showLocation(); // Update displayed location immediately
             });
         } else {
             alert("Geolocation is not supported by this browser.");
         }
     }
+
+    function showLocation() {
+        let lat = localStorage.getItem("parking_lat");
+        let lon = localStorage.getItem("parking_lon");
+
+        if (lat && lon) {
+            document.getElementById("location").innerText = `📍 Latitude: ${lat}, Longitude: ${lon}`;
+            document.getElementById("mapLink").href = `https://www.google.com/maps?q=${lat},${lon}`;
+            document.getElementById("mapLink").style.display = "block";
+        } else {
+            document.getElementById("location").innerText = "No location saved.";
+            document.getElementById("mapLink").style.display = "none";
+        }
+    }
+
+    window.onload = showLocation; // Ensure location is displayed on page load
 </script>
 {% endblock %}

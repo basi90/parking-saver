@@ -20,7 +20,6 @@ from core import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/', views.home, name='home'),
-    path('retrieve/', views.retrieve, name='retrieve'),
+    path('', views.home, name='home'),
     path('', include('pwa.urls')),
 ]
