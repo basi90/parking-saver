@@ -1,23 +1,88 @@
 {% extends "core/base.html" %}
 
-{% block title %}Save Parking Spot{% endblock %}
+{% block title %}Parking Saver{% endblock %}
 
 {% block content %}
-<h1>🚗 Save Your Parking Spot</h1>
-<button onclick="saveLocation()">Save My Location</button>
-<p id="status"></p>
+<h1 class="fw-bold my-3">Parking Saver</h1>
+
+<!-- Save Parking Spot -->
+<div class="card p-4">
+    <h2 class="h5 fw-semibold mb-3">Save Your Parking Spot</h2>
+    <button class="btn btn-primary w-100" onclick="saveLocation()">📌 Save My Location</button>
+    <p id="status" class="text-success mt-2"></p>
+</div>
+
+<!-- Retrieve Parking Spot -->
+<div class="card p-4">
+    <h2 class="h5 fw-semibold mb-3">Find Your Car</h2>
+    <ul id="locations" class="list-unstyled"></ul>
+    <a id="mapLink" href="#" target="_blank" class="btn btn-secondary w-100 hidden mt-3">📍  Show Location</a>
+</div>
 
 <script>
-    function saveLocation() {
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                localStorage.setItem("parking_lat", position.coords.latitude);
-                localStorage.setItem("parking_lon", position.coords.longitude);
-                document.getElementById("status").innerText = "✅ Location saved!";
-            });
-        } else {
-            alert("Geolocation is not supported by this browser.");
-        }
+  function saveLocation() {
+      if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+              const now = new Date();
+              const dateFormatted = now.toLocaleDateString('en-US', {
+                  day: 'numeric',
+                  month: 'long'
+              });
+              const timeFormatted = now.toLocaleTimeString('en-US', {
+                  hour: '2-digit',
+                  minute: '2-digit'
+              });
+
+              let newLocation = {
+                  lat: position.coords.latitude.toFixed(6),
+                  lon: position.coords.longitude.toFixed(6),
+                  date: dateFormatted,
+                  time: timeFormatted
+              };
+
+              // ✅ Overwrite the previous location instead of appending
+              localStorage.setItem("parking_location", JSON.stringify(newLocation));
+
+              document.getElementById("status").innerText = "✅ Location saved!";
+              showLocation();
+          }, function(error) {
+              alert("Error getting location: " + error.message);
+          });
+      } else {
+          alert("Geolocation is not supported by this browser.");
+      }
+  }
+
+  function showLocation() {
+    let locationData = localStorage.getItem("parking_location");
+
+    if (!locationData) {
+        document.getElementById("locations").innerHTML = "<li class='text-muted'>No location saved.</li>";
+        document.getElementById("mapLink").classList.add("hidden");
+        return;
     }
+
+    let location = JSON.parse(locationData);
+
+    let list = document.getElementById("locations");
+    list.innerHTML = ""; // Clear previous data
+
+    let listItem = document.createElement("li");
+    listItem.classList.add("mb-3", "text-start");
+    listItem.innerHTML = `
+        <div><strong>Date:</strong> ${location.date}</div>
+        <div><strong>Time:</strong> ${location.time}</div>
+        <div><strong>Coordinates:</strong> ${location.lat}, ${location.lon}</div>
+    `;
+
+    list.appendChild(listItem);
+
+    // ✅ Modify "Show Location" button to open Google Maps directly
+    document.getElementById("mapLink").href = `https://www.google.com/maps?q=${location.lat},${location.lon}`;
+    document.getElementById("mapLink").classList.remove("hidden");
+  }
+
+
+  window.onload = showLocation;
 </script>
 {% endblock %}
