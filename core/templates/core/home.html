@@ -3,46 +3,81 @@
 {% block title %}Parking Saver{% endblock %}
 
 {% block content %}
-<h1>🚗 Parking Saver</h1>
+<h1 class="fw-bold my-3">Parking Saver</h1>
 
 <!-- Save Parking Spot -->
-<h2>Save Your Parking Spot</h2>
-<button onclick="saveLocation()">Save My Location</button>
-<p id="status"></p>
+<div class="card p-4">
+    <h2 class="h5 fw-semibold mb-3">Save Your Parking Spot</h2>
+    <button class="btn btn-primary w-100" onclick="saveLocation()">📍 Save My Location</button>
+    <p id="status" class="text-success mt-2"></p>
+</div>
 
 <!-- Retrieve Parking Spot -->
-<h2>Find Your Car</h2>
-<p id="location"></p>
-<a id="mapLink" href="#" target="_blank" style="display: none;">Show on Map</a>
+<div class="card p-4">
+    <h2 class="h5 fw-semibold mb-3">Find Your Car</h2>
+    <ul id="locations" class="list-unstyled"></ul>
+    <a id="mapLink" href="#" target="_blank" class="btn btn-secondary w-100 hidden mt-3">📍 Show Last Location</a>
+</div>
 
 <script>
     function saveLocation() {
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                localStorage.setItem("parking_lat", position.coords.latitude);
-                localStorage.setItem("parking_lon", position.coords.longitude);
-                document.getElementById("status").innerText = "✅ Location saved!";
-                showLocation(); // Update displayed location immediately
-            });
-        } else {
-            alert("Geolocation is not supported by this browser.");
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            let parkingHistory = JSON.parse(localStorage.getItem("parking_history")) || [];
+
+            let newLocation = {
+                lat: position.coords.latitude,
+                lon: position.coords.longitude,
+                timestamp: new Date().toLocaleString()
+            };
+
+            parkingHistory.push(newLocation);
+            if (parkingHistory.length > 5) {
+                parkingHistory.shift();
+            }
+
+            localStorage.setItem("parking_history", JSON.stringify(parkingHistory));
+
+            document.getElementById("status").innerText = "✅ Location saved!";
+            showLocations();
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+  }
+
+
+    function showLocations() {
+        let parkingHistory = JSON.parse(localStorage.getItem("parking_history")) || [];
+        let list = document.getElementById("locations");
+        list.innerHTML = "";
+
+        if (parkingHistory.length === 0) {
+            list.innerHTML = "<li class='text-muted'>No location saved.</li>";
+            document.getElementById("mapLink").classList.add("hidden");
+            return;
         }
+
+        parkingHistory.forEach((location, index) => {
+            let listItem = document.createElement("li");
+            listItem.classList.add("mb-2");
+            listItem.innerText = `${location.timestamp}: Lat ${location.lat}, Lon ${location.lon}`;
+
+            let mapLink = document.createElement("a");
+            mapLink.href = `https://www.google.com/maps?q=${location.lat},${location.lon}`;
+            mapLink.target = "_blank";
+            // mapLink.innerText = " [Show on Map]";
+            mapLink.classList.add("text-primary", "ms-2");
+
+            listItem.appendChild(mapLink);
+            list.appendChild(listItem);
+        });
+
+        let lastLocation = parkingHistory[parkingHistory.length - 1];
+        document.getElementById("mapLink").href = `https://www.google.com/maps?q=${lastLocation.lat},${lastLocation.lon}`;
+        document.getElementById("mapLink").classList.remove("hidden");
     }
 
-    function showLocation() {
-        let lat = localStorage.getItem("parking_lat");
-        let lon = localStorage.getItem("parking_lon");
-
-        if (lat && lon) {
-            document.getElementById("location").innerText = `📍 Latitude: ${lat}, Longitude: ${lon}`;
-            document.getElementById("mapLink").href = `https://www.google.com/maps?q=${lat},${lon}`;
-            document.getElementById("mapLink").style.display = "block";
-        } else {
-            document.getElementById("location").innerText = "No location saved.";
-            document.getElementById("mapLink").style.display = "none";
-        }
-    }
-
-    window.onload = showLocation; // Ensure location is displayed on page load
+    window.onload = showLocations;
 </script>
 {% endblock %}
