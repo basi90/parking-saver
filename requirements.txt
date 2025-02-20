@@ -31,6 +31,7 @@ dnspython==2.4.2
 Flask==3.0.0
 Flask-Cors==4.0.0
 frozenlist==1.4.0
+gunicorn==23.0.0
 gyp==0.1
 httplib2==0.20.2
 hyperlink==21.0.0
