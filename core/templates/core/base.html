@@ -10,78 +10,120 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-
     <!-- Bootstrap 5 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .container {
-            max-width: 400px;
-            margin: auto;
-            padding: 2rem;
-            text-align: center;
-        }
-        .btn-custom {
-            background: #007AFF;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s ease;
-            display: block;
-            width: 100%;
-            margin-top: 10px;
-            border: none;
-        }
-        .btn-custom:hover {
-            background: #005EC4;
-        }
-        .card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.5rem;
-        }
-        .hidden {
-            display: none;
-        }
-        #locations li {
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-            padding-bottom: 1rem;
-        }
-        body.dark #locations li {
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
+      /* General Styling */
+      body {
+          font-family: 'Poppins', sans-serif;
+          background-color: #f8f9fa;
+          color: #333;
+          transition: background-color 0.3s ease, color 0.3s ease;
+          margin: 0;
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1rem;
+      }
 
-        #darkModeToggle {
-            z-index: 1000;
-        }
-        .text-start {
-            text-align: left !important;
-        }
-        body.dark {
-            background-color: #1e1e1e;
-            color: white;
-        }
-        .card.dark {
-            background-color: #333;
-            color: white;
-        }
+      /* Centering Container */
+      .main-container {
+          max-width: 400px;
+          width: 90vw;
+          text-align: center;
+          padding: 1rem;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+      }
+
+      /* Buttons */
+      .btn-custom {
+          background: #007AFF;
+          color: white;
+          padding: 12px 20px;
+          border-radius: 12px;
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: 0.3s ease-in-out;
+          display: block;
+          width: 100%;
+          margin-top: 10px;
+          border: none;
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-custom:hover {
+          background: #005EC4;
+          transform: scale(1.03);
+      }
+
+      /* Cards */
+      .card {
+          background: white;
+          padding: 1.5rem;
+          border-radius: 16px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          margin-bottom: 1.5rem;
+          transition: 0.3s ease-in-out;
+      }
+
+      .card.dark {
+          background-color: #2c2c2c;
+          color: white;
+      }
+
+      /* Dark Mode */
+      body.dark {
+          background-color: #1e1e1e;
+          color: white;
+      }
+
+      body.dark .card {
+          background-color: #2c2c2c;
+          color: white;
+      }
+
+      /* Dark Mode Toggle Button */
+      #darkModeToggle {
+          position: fixed;
+          top: 15px;
+          right: 15px;
+          z-index: 1000;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 18px;
+          background: white;
+          color: #333;
+          border: none;
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+          cursor: pointer;
+          transition: 0.3s ease-in-out;
+      }
+
+      #darkModeToggle:hover {
+          transform: scale(1.1);
+      }
+
+      /* Dark Mode Toggle Button in Dark Mode */
+      body.dark #darkModeToggle {
+          background: #444;
+          color: white;
+      }
     </style>
 </head>
 <body>
-    <div class="container">
-        <button id="darkModeToggle" class="btn btn-light position-absolute top-0 end-0 m-3 rounded-circle p-2 shadow">🌙</button>
+    <button id="darkModeToggle" class="btn btn-light position-fixed top-0 end-0 m-3 rounded-circle p-2 shadow">🌙</button>
 
+    <div class="main-container">
         {% block content %}{% endblock %}
     </div>
 
