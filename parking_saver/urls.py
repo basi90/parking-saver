@@ -16,10 +16,56 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import JsonResponse
 from core import views
+
+# Function to serve the manifest.json file
+def manifest(request):
+    return JsonResponse({
+        "name": "Parking Saver",
+        "short_name": "Parking Saver",
+        "description": "Save and retrieve your parking spot",
+        "start_url": "/",
+        "display": "standalone",
+        "scope": "/",
+        "orientation": "any",
+        "background_color": "#ffffff",
+        "theme_color": "#2196F3",
+        "status_bar": "default",
+        "icons": [
+            {
+                "src": "/static/icons/icon-192x192.png",
+                "sizes": "192x192",
+                "type": "image/png"
+            },
+            {
+                "src": "/static/icons/icon-512x512.png",
+                "sizes": "512x512",
+                "type": "image/png"
+            }
+        ],
+        "dir": "ltr",
+        "lang": "en-US",
+        "screenshots": [
+            {
+                "src": "/static/screenshots/screenshot1.png",
+                "sizes": "1080x1920",
+                "type": "image/png",
+                "form_factor": "wide"
+            },
+            {
+                "src": "/static/screenshots/screenshot2.png",
+                "sizes": "1080x1920",
+                "type": "image/png"
+            }
+        ],
+        "shortcuts": []
+    })
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
     path('', include('pwa.urls')),
+    path('manifest.json', manifest),
 ]
