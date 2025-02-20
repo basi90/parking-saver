@@ -1,1 +1,1 @@
-web: gunicorn parking_saver.wsgi:application --bind 0.0.0.0:
+web: gunicorn parking_saver.wsgi --bind 0.0.0.0:$PORT
