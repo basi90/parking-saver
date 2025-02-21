@@ -135,7 +135,13 @@
       }, 2000);
   }
 
+  function isTouchDevice() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+}
+
   function showTooltip(element, text) {
+      if (isTouchDevice()) return; // ❌ Exit if on a touch device (mobile/tablet)
+
       let tooltip = document.getElementById("tooltip");
       if (!tooltip) {
           tooltip = document.createElement("div");
@@ -156,13 +162,6 @@
       } else {
           tooltip.style.left = `${rect.left + window.scrollX + rect.width / 2 - tooltip.offsetWidth / 2}px`; // Center horizontally
           tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight - 8}px`; // Move above
-      }
-  }
-
-  function hideTooltip() {
-      let tooltip = document.getElementById("tooltip");
-      if (tooltip) {
-          tooltip.classList.remove("show-tooltip");
       }
   }
 
