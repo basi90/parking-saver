@@ -32,13 +32,6 @@
       button.classList.add("loading");
       button.innerHTML = "Saving... ⏳";
 
-      setTimeout(() => {
-          if (button.innerHTML === "Saving... ⏳") {
-              button.innerHTML = "📌 Save My Location";
-              button.classList.remove("loading");
-          }
-      }, 3000);
-
       if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition(function(position) {
               setTimeout(() => {
@@ -192,18 +185,19 @@
   }
 
   function resetButtonColor(event) {
-    const button = event.target;
-    if (button.classList.contains('btn-black') || button.classList.contains('btn-black-secondary')) {
-        requestAnimationFrame(() => {
-            button.style.backgroundColor = '#000';
-        });
-    }
+      const button = event.target;
+      if (button.classList.contains('btn-black') || button.classList.contains('btn-black-secondary')) {
+          setTimeout(() => {
+              button.style.backgroundColor = '#000'; // ✅ Forces reset to black
+          }, 10); // ✅ Small delay ensures UI update
+      }
   }
 
   if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
       document.body.addEventListener('touchstart', handleButtonPress, false);
       document.body.addEventListener('touchend', resetButtonColor, false);
       document.body.addEventListener('touchcancel', resetButtonColor, false);
+      document.body.addEventListener('click', resetButtonColor, false);
   }
 
   window.onload = showLocation;
