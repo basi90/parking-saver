@@ -201,17 +201,6 @@
           animation: slide-in 0.3s ease-in-out;
       }
 
-      @keyframes slide-in {
-          from {
-              transform: translateX(-50%) translateY(20px);
-              opacity: 0;
-          }
-          to {
-              transform: translateX(-50%) translateY(0);
-              opacity: 1;
-          }
-      }
-
       .toast-message.fade-out {
           opacity: 0;
           transition: opacity 0.5s ease-in-out;
@@ -234,6 +223,26 @@
       .show-tooltip {
           opacity: 1;
           transform: translateY(0);
+      }
+
+      /* Disable Hover on Mobile (Touch Devices) */
+      @media (hover: none) {
+          .btn-black:hover,
+          .btn-black-secondary:hover {
+              background: #000;
+              transform: none;
+          }
+      }
+
+      @keyframes slide-in {
+          from {
+              transform: translateX(-50%) translateY(20px);
+              opacity: 0;
+          }
+          to {
+              transform: translateX(-50%) translateY(0);
+              opacity: 1;
+          }
       }
     </style>
 </head>
