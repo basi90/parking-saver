@@ -25,60 +25,71 @@
 </div>
 
 <script>
-  function saveLocation() {
-      const button = document.querySelector("button[onclick='saveLocation()']");
+function saveLocation() {
+    const button = document.querySelector("button[onclick='saveLocation()']");
 
-      // Provide immediate feedback
-      button.classList.add("loading");
-      button.innerHTML = "Saving... ⏳";
+    // Check if there's already a saved location
+    let existingLocation = localStorage.getItem("parking_location");
+    if (existingLocation) {
+        let confirmSave = confirm("You already have a saved location. Do you want to overwrite it?");
+        if (!confirmSave) {
+            return; // ❌ Exit function if user cancels
+        }
+    }
 
-      if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-              setTimeout(() => {
-                  button.classList.remove("loading");
-                  button.innerHTML = "📌 Save My Location";
-              }, 500);
+    // Provide immediate feedback
+    button.classList.add("loading");
+    button.innerHTML = "Saving... ⏳";
 
-              const now = new Date();
-              const dateFormatted = now.toLocaleDateString('en-US', {
-                  day: 'numeric',
-                  month: 'long'
-              });
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            setTimeout(() => {
+                button.classList.remove("loading");
+                button.innerHTML = "📌 Save My Location";
+            }, 500);
 
-              const timeFormatted = now.toLocaleTimeString('en-US', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit'
-              });
+            const now = new Date();
+            const dateFormatted = now.toLocaleDateString('en-US', {
+                day: 'numeric',
+                month: 'long'
+            });
 
-              let newLocation = {
-                  lat: position.coords.latitude.toFixed(6),
-                  lon: position.coords.longitude.toFixed(6),
-                  date: dateFormatted,
-                  time: timeFormatted
-              };
+            // ⏳ Now includes seconds (HH:MM:SS)
+            const timeFormatted = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
 
-              // Save only the latest location
-              localStorage.setItem("parking_location", JSON.stringify(newLocation));
+            let newLocation = {
+                lat: position.coords.latitude.toFixed(6),
+                lon: position.coords.longitude.toFixed(6),
+                date: dateFormatted,
+                time: timeFormatted
+            };
 
-              // Vibrate for mobile users
-              if (navigator.vibrate) {
-                  navigator.vibrate(100);
-              }
+            // Save only the latest location
+            localStorage.setItem("parking_location", JSON.stringify(newLocation));
 
-              // Show a toast notification
-              showToast("🚗 Parking location saved!");
+            // Vibrate for mobile users
+            if (navigator.vibrate) {
+                navigator.vibrate(100);
+            }
 
-              showLocation();
-          }, function(error) {
-              button.classList.remove("loading");
-              button.innerHTML = "📌 Save My Location";
-              alert("Error getting location: " + error.message);
-          });
-      } else {
-          alert("Geolocation is not supported by this browser.");
-      }
+            // Show a toast notification
+            showToast("🚗 Parking location saved!");
+
+            showLocation();
+        }, function(error) {
+            button.classList.remove("loading");
+            button.innerHTML = "📌 Save My Location";
+            alert("Error getting location: " + error.message);
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
   }
+
 
   function showLocation() {
       let locationData = localStorage.getItem("parking_location");
