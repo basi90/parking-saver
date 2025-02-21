@@ -45,7 +45,6 @@
                   month: 'long'
               });
 
-              // ⏳ Now includes seconds (HH:MM:SS)
               const timeFormatted = now.toLocaleTimeString('en-US', {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -175,29 +174,6 @@
       if (tooltip) {
           tooltip.classList.remove("show-tooltip");
       }
-  }
-
-  function handleButtonPress(event) {
-      const button = event.target;
-      if (button.classList.contains('btn-black') || button.classList.contains('btn-black-secondary')) {
-          button.style.backgroundColor = '#444';
-      }
-  }
-
-  function resetButtonColor(event) {
-      const button = event.target;
-      if (button.classList.contains('btn-black') || button.classList.contains('btn-black-secondary')) {
-          setTimeout(() => {
-              button.style.backgroundColor = '#000'; // ✅ Forces reset to black
-          }, 10); // ✅ Small delay ensures UI update
-      }
-  }
-
-  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-      document.body.addEventListener('touchstart', handleButtonPress, false);
-      document.body.addEventListener('touchend', resetButtonColor, false);
-      document.body.addEventListener('touchcancel', resetButtonColor, false);
-      document.body.addEventListener('click', resetButtonColor, false);
   }
 
   window.onload = showLocation;
