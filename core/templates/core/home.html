@@ -32,6 +32,13 @@
       button.classList.add("loading");
       button.innerHTML = "Saving... ⏳";
 
+      setTimeout(() => {
+          if (button.innerHTML === "Saving... ⏳") {
+              button.innerHTML = "📌 Save My Location";
+              button.classList.remove("loading");
+          }
+      }, 3000);
+
       if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition(function(position) {
               setTimeout(() => {
@@ -104,8 +111,9 @@
       `;
 
       let mapsUrl = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
-          ? `maps://maps.apple.com/?q=${location.lat},${location.lon}`
-          : `https://www.google.com/maps?q=${location.lat},${location.lon}`;
+        ? `maps://maps.apple.com/?q=${location.lat},${location.lon}`
+        : `https://www.google.com/maps?q=${location.lat},${location.lon}`;
+
 
       mapLink.href = mapsUrl;
       mapLink.classList.remove("hidden");
@@ -137,10 +145,10 @@
 
   function isTouchDevice() {
     return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-}
+  }
 
   function showTooltip(element, text) {
-      if (isTouchDevice()) return; // ❌ Exit if on a touch device (mobile/tablet)
+      if (isTouchDevice()) return; // Exit if on a touch device (mobile/tablet)
 
       let tooltip = document.getElementById("tooltip");
       if (!tooltip) {
@@ -167,6 +175,35 @@
 
   function getDarkModeTooltip() {
       return document.body.classList.contains("dark") ? "Light Mode" : "Dark Mode";
+  }
+
+  function hideTooltip() {
+      let tooltip = document.getElementById("tooltip");
+      if (tooltip) {
+          tooltip.classList.remove("show-tooltip");
+      }
+  }
+
+  function handleButtonPress(event) {
+      const button = event.target;
+      if (button.classList.contains('btn-black') || button.classList.contains('btn-black-secondary')) {
+          button.style.backgroundColor = '#444';
+      }
+  }
+
+  function resetButtonColor(event) {
+    const button = event.target;
+    if (button.classList.contains('btn-black') || button.classList.contains('btn-black-secondary')) {
+        requestAnimationFrame(() => {
+            button.style.backgroundColor = '#000';
+        });
+    }
+  }
+
+  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+      document.body.addEventListener('touchstart', handleButtonPress, false);
+      document.body.addEventListener('touchend', resetButtonColor, false);
+      document.body.addEventListener('touchcancel', resetButtonColor, false);
   }
 
   window.onload = showLocation;

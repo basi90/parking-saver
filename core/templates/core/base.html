@@ -53,59 +53,36 @@
       }
 
       /* Buttons */
-      .btn-black {
-          background: #000;
-          color: white;
+      .btn-black,
+      .btn-black-secondary {
+          background: #000 !important;
+          color: white !important;
           padding: 12px 20px;
           border-radius: 12px;
           font-size: 16px;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.3s ease-in-out;
+          transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
           display: block;
           width: 100%;
           margin-top: 10px;
           border: none;
           box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+          -webkit-tap-highlight-color: transparent;
       }
 
-      .btn-black:hover {
-          background: #ff5733;
-          transform: scale(1.03);
-      }
-
-
-      .btn-black:active  {
-          transform: scale(0.95);
-      }
-
-      .btn-black-secondary {
-          background: #000;
-          color: white;
-          padding: 12px 20px;
-          border-radius: 12px;
-          font-size: 16px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease-in-out;
-          display: block;
-          width: 100%;
-          border: none;
-          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-      }
-
+      .btn-black:hover,
       .btn-black-secondary:hover {
-          background: #ff5733;
+          background: #444 !important;
           transform: scale(1.03);
+          color: white !important;
       }
 
+      /* Prevent Color Change on Click (Desktop & Mobile) */
+      .btn-black:active,
       .btn-black-secondary:active {
-          transform: scale(0.95);
-      }
-
-      .btn-custom.loading {
-          pointer-events: none;
-          opacity: 0.7;
+          background: #222 !important;
+          color: white !important;
       }
 
       .delete-icon {
@@ -225,15 +202,6 @@
           transform: translateY(0);
       }
 
-      /* Disable Hover on Mobile (Touch Devices) */
-      @media (hover: none) {
-          .btn-black:hover,
-          .btn-black-secondary:hover {
-              background: #000;
-              transform: none;
-          }
-      }
-
       @keyframes slide-in {
           from {
               transform: translateX(-50%) translateY(20px);
@@ -242,6 +210,20 @@
           to {
               transform: translateX(-50%) translateY(0);
               opacity: 1;
+          }
+      }
+
+      @media (hover: hover) {
+          .btn-black:hover,
+          .btn-black-secondary:hover {
+              background: #444 !important;
+          }
+      }
+
+      @media (hover: none) {
+          .btn-black,
+          .btn-black-secondary {
+              background: #000 !important;
           }
       }
     </style>
