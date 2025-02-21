@@ -21,7 +21,7 @@
         <i class="fas fa-trash"></i>
     </span>
     <ul id="locations" class="list-unstyled"></ul>
-    <a id="mapLink" href="#" target="_blank" class="btn btn-black-secondary w-100 hidden mt-3">📍 Show Last Location</a>
+    <a id="mapLink" href="#" target="_blank" class="btn btn-black-secondary w-100 hidden">📍 Show Last Location</a>
 </div>
 
 <script>
@@ -148,8 +148,15 @@
       tooltip.classList.add("show-tooltip");
 
       let rect = element.getBoundingClientRect();
-      tooltip.style.left = `${rect.left + window.scrollX + rect.width / 2 - tooltip.offsetWidth / 2}px`;
-      tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight - 8}px`;
+
+      // Check if tooltip is for the dark mode button
+      if (element.id === "darkModeToggle") {
+          tooltip.style.left = `${rect.left + window.scrollX - tooltip.offsetWidth - 10}px`; // Move to the left
+          tooltip.style.top = `${rect.top + window.scrollY + rect.height / 2 - tooltip.offsetHeight / 2}px`; // Center vertically
+      } else {
+          tooltip.style.left = `${rect.left + window.scrollX + rect.width / 2 - tooltip.offsetWidth / 2}px`; // Center horizontally
+          tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight - 8}px`; // Move above
+      }
   }
 
   function hideTooltip() {
