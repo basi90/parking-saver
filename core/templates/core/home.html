@@ -21,16 +21,29 @@
 
 <script>
   function saveLocation() {
+      const button = document.querySelector("button[onclick='saveLocation()']");
+
+      // Provide immediate feedback
+      button.classList.add("loading");
+      button.innerHTML = "Saving... ⏳";
+
       if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition(function(position) {
+              setTimeout(() => {
+                  button.classList.remove("loading");
+                  button.innerHTML = "📌 Save My Location";
+              }, 500);
+
               const now = new Date();
               const dateFormatted = now.toLocaleDateString('en-US', {
                   day: 'numeric',
                   month: 'long'
               });
+
               const timeFormatted = now.toLocaleTimeString('en-US', {
                   hour: '2-digit',
-                  minute: '2-digit'
+                  minute: '2-digit',
+                  second: '2-digit'
               });
 
               let newLocation = {
@@ -40,12 +53,21 @@
                   time: timeFormatted
               };
 
-              // ✅ Overwrite the previous location instead of appending
+              // Save only the latest location
               localStorage.setItem("parking_location", JSON.stringify(newLocation));
 
-              document.getElementById("status").innerText = "✅ Location saved!";
+              // Vibrate for mobile users
+              if (navigator.vibrate) {
+                  navigator.vibrate(100);
+              }
+
+              // Show a toast notification
+              showToast("🚗 Parking location saved!");
+
               showLocation();
           }, function(error) {
+              button.classList.remove("loading");
+              button.innerHTML = "📌 Save My Location";
               alert("Error getting location: " + error.message);
           });
       } else {
@@ -54,40 +76,43 @@
   }
 
   function showLocation() {
-    let locationData = localStorage.getItem("parking_location");
+      let locationData = localStorage.getItem("parking_location");
+      let list = document.getElementById("locations");
+      let mapLink = document.getElementById("mapLink");
 
-    if (!locationData) {
-        document.getElementById("locations").innerHTML = "<li class='text-muted'>No location saved.</li>";
-        document.getElementById("mapLink").classList.add("hidden");
-        return;
-    }
+      if (!locationData) {
+          list.innerHTML = "<li class='text-muted'>No location saved.</li>";
+          mapLink.classList.add("hidden");
+          return;
+      }
 
-    let location = JSON.parse(locationData);
+      let location = JSON.parse(locationData);
+      list.innerHTML = `
+          <li class="mb-3 text-start">
+              <div><strong>Date:</strong> ${location.date}</div>
+              <div><strong>Time:</strong> ${location.time}</div>
+              <div><strong>Coordinates:</strong> ${location.lat}, ${location.lon}</div>
+          </li>
+      `;
 
-    let list = document.getElementById("locations");
-    list.innerHTML = ""; // Clear previous data
+      let mapsUrl = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
+          ? `maps://maps.apple.com/?q=${location.lat},${location.lon}`
+          : `https://www.google.com/maps?q=${location.lat},${location.lon}`;
 
-    let listItem = document.createElement("li");
-    listItem.classList.add("mb-3", "text-start");
-    listItem.innerHTML = `
-        <div><strong>Date:</strong> ${location.date}</div>
-        <div><strong>Time:</strong> ${location.time}</div>
-        <div><strong>Coordinates:</strong> ${location.lat}, ${location.lon}</div>
-    `;
-
-    list.appendChild(listItem);
-
-    let mapsUrl;
-      if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
-          mapsUrl = `maps://maps.apple.com/?q=${location.lat},${location.lon}`;
-      }  else {
-          mapsUrl = `https://www.google.com/maps?q=${location.lat},${location.lon}`;
-     }
-
-    document.getElementById("mapLink").href = mapsUrl;
-    document.getElementById("mapLink").classList.remove("hidden");
+      mapLink.href = mapsUrl;
+      mapLink.classList.remove("hidden");
   }
 
+  function showToast(message) {
+      const toast = document.createElement("div");
+      toast.className = "toast-message";
+      toast.innerText = message;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+          toast.classList.add("fade-out");
+          setTimeout(() => toast.remove(), 500);
+      }, 2000);
+  }
 
   window.onload = showLocation;
 </script>
