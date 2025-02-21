@@ -77,8 +77,14 @@
 
     list.appendChild(listItem);
 
-    // ✅ Modify "Show Location" button to open Google Maps directly
-    document.getElementById("mapLink").href = `https://www.google.com/maps?q=${location.lat},${location.lon}`;
+    let mapsUrl;
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+          mapsUrl = `maps://maps.apple.com/?q=${location.lat},${location.lon}`;
+      }  else {
+          mapsUrl = `https://www.google.com/maps?q=${location.lat},${location.lon}`;
+     }
+
+    document.getElementById("mapLink").href = mapsUrl;
     document.getElementById("mapLink").classList.remove("hidden");
   }
 
