@@ -28,7 +28,7 @@ Parking Saver is a **Progressive Web App (PWA)** built with **Django** to help u
 
 ### 1️⃣ Clone the repository
 ```bash
- git clone https://github.com/yourusername/parking-saver.git
+ git clone https://github.com/basi90/parking-saver.git
  cd parking-saver
 ```
 
