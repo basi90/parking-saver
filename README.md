@@ -42,7 +42,6 @@ Create a `.env` file and add the following:
 ```env
 SECRET_KEY=your-secret-key
 DEBUG=True
-ALLOWED_HOSTS=127.0.0.1, localhost
 ```
 
 ### 4️⃣ Run migrations
