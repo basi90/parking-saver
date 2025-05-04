@@ -231,7 +231,7 @@
     <button id="darkModeToggle" class="btn btn-light position-fixed top-0 end-0 m-3 rounded-circle p-2 shadow"
         onmouseover="showTooltip(this, getDarkModeTooltip())"
         onmouseout="hideTooltip()">
-        🌙
+        ☀️
     </button>
 
     <div class="main-container">
@@ -243,11 +243,11 @@
 
       function updateButtonText() {
           if (document.body.classList.contains("dark")) {
-              toggle.innerHTML = "☀️";
+              toggle.innerHTML = "🌙";
               toggle.classList.remove("btn-dark");
               toggle.classList.add("btn-light");
           } else {
-              toggle.innerHTML = "🌙";
+              toggle.innerHTML = "☀️";
               toggle.classList.remove("btn-light");
               toggle.classList.add("btn-dark");
           }
